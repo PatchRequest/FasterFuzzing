@@ -5,7 +5,7 @@ FROM amd64/ubuntu
 #    && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
-RUN apt install git-all python3 python3-setuptools wget gcc-x86-64-linux-gnu build-essential g++-x86-64-linux-gnu libc6-dev-amd64-cross -y
+RUN apt install git-all python3 python3-setuptools wget gcc-x86-64-linux-gnu build-essential g++-x86-64-linux-gnu libc6-dev-amd64-cross python3-pip -y
 RUN bash -c "$(wget https://gef.blah.cat/sh -O -)"
 
 WORKDIR /
