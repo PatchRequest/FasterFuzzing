@@ -5,7 +5,16 @@ FROM amd64/ubuntu
 #    && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
-RUN apt install git-all python3 python3-setuptools wget gcc-x86-64-linux-gnu build-essential g++-x86-64-linux-gnu libc6-dev-amd64-cross python3-pip -y
+RUN apt install git-all python3 python3-setuptools wget gcc-x86-64-linux-gnu build-essential g++-x86-64-linux-gnu libc6-dev-amd64-cross python3-pip openssh-server -y
+RUN systemctl enable ssh
+RUN systemctl start ssh
+RUN echo 'root:password' | chpasswd
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+
+
 RUN bash -c "$(wget https://gef.blah.cat/sh -O -)"
 
 WORKDIR /
