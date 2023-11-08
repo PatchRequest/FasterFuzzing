@@ -61,3 +61,5 @@ RUN sysctl kernel.perf_event_paranoid=1
 ADD toFuzz /toFuzz
 
 ENV PATH=$PATH:/AFLplusplus
+
+EXPOSE 22
