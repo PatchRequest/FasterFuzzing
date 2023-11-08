@@ -6,12 +6,18 @@ FROM amd64/ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
 RUN apt install git-all python3 python3-setuptools wget gcc-x86-64-linux-gnu build-essential g++-x86-64-linux-gnu libc6-dev-amd64-cross python3-pip openssh-server -y
-RUN systemctl enable ssh
-RUN systemctl start ssh
-RUN echo 'root:password' | chpasswd
-RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-# SSH login fix. Otherwise user is kicked off after login
+
+# Set up configuration for SSH
+RUN mkdir /var/run/sshd
+RUN echo 'root:secret_password' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise, user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
 
 
 
@@ -63,3 +69,5 @@ ADD toFuzz /toFuzz
 ENV PATH=$PATH:/AFLplusplus
 
 EXPOSE 22
+# Run SSH
+CMD ["/usr/sbin/sshd", "-D"]
